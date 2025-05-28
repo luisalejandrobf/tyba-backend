@@ -7,18 +7,6 @@
  * @returns Application configuration object
  */
 export default () => {
-  // Print environment variables from process.env
-  console.log('Configuration factory called with process.env variables:');
-  console.log('PORT:', process.env.PORT);
-  console.log('NODE_ENV:', process.env.NODE_ENV);
-  console.log('DATABASE_HOST:', process.env.DATABASE_HOST);
-  console.log('DATABASE_PORT:', process.env.DATABASE_PORT);
-  console.log('DATABASE_USER:', process.env.DATABASE_USER);
-  console.log('DATABASE_PASSWORD:', process.env.DATABASE_PASSWORD ? '[REDACTED]' : undefined);
-  console.log('DATABASE_NAME:', process.env.DATABASE_NAME);
-  console.log('DATABASE_SSL_MODE:', process.env.DATABASE_SSL_MODE);
-  console.log('JWT_SECRET:', process.env.JWT_SECRET ? '[REDACTED]' : undefined);
-  console.log('JWT_EXPIRATION:', process.env.JWT_EXPIRATION);
 
   // The configuration object
   const config = {
@@ -42,15 +30,6 @@ export default () => {
       expiresIn: process.env.JWT_EXPIRATION || '1h',
     },
   };
-
-  // Log the final configuration that will be used
-  console.log('Final configuration values:');
-  console.log('port:', config.port);
-  console.log('database.host:', config.database.host);
-  console.log('database.port:', config.database.port);
-  console.log('database.user:', config.database.user);
-  console.log('database.name:', config.database.name);
-  console.log('database.sslMode:', config.database.sslMode);
   
   return config;
 }; 

@@ -5,8 +5,10 @@ import { AppService } from './app.service';
 import configuration from './config/configuration';
 import { RepositoriesModule } from './infrastructure/repositories/repositories.module';
 import { AuthModule } from './application/services/auth/auth.module';
+import { RestaurantModule } from './application/services/restaurant/restaurant.module';
 import { AuthController } from './interfaces/controllers/auth.controller';
 import { UserController } from './interfaces/controllers/user.controller';
+import { RestaurantController } from './interfaces/controllers/restaurant.controller';
 import { TypeOrmConfigModule } from './infrastructure/typeorm/typeorm.module';
 
 /**
@@ -24,8 +26,14 @@ import { TypeOrmConfigModule } from './infrastructure/typeorm/typeorm.module';
     TypeOrmConfigModule,
     RepositoriesModule,
     AuthModule,
+    RestaurantModule,
   ],
-  controllers: [AppController, AuthController, UserController],
+  controllers: [
+    AppController, 
+    AuthController, 
+    UserController,
+    RestaurantController,
+  ],
   providers: [AppService],
 })
 export class AppModule {}
