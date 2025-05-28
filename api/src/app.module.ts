@@ -7,6 +7,7 @@ import { RepositoriesModule } from './infrastructure/repositories/repositories.m
 import { AuthModule } from './application/services/auth/auth.module';
 import { AuthController } from './interfaces/controllers/auth.controller';
 import { UserController } from './interfaces/controllers/user.controller';
+import { TypeOrmConfigModule } from './infrastructure/typeorm/typeorm.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UserController } from './interfaces/controllers/user.controller';
       isGlobal: true,
       load: [configuration],
     }),
+    TypeOrmConfigModule,
     RepositoriesModule,
     AuthModule,
   ],
