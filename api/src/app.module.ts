@@ -4,6 +4,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import configuration from './config/configuration';
 import { RepositoriesModule } from './infrastructure/repositories/repositories.module';
+import { AuthModule } from './application/services/auth/auth.module';
+import { AuthController } from './interfaces/controllers/auth.controller';
+import { UserController } from './interfaces/controllers/user.controller';
 
 @Module({
   imports: [
@@ -12,8 +15,9 @@ import { RepositoriesModule } from './infrastructure/repositories/repositories.m
       load: [configuration],
     }),
     RepositoriesModule,
+    AuthModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, AuthController, UserController],
   providers: [AppService],
 })
 export class AppModule {}
