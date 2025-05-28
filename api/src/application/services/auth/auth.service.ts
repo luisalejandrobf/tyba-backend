@@ -6,6 +6,12 @@ import { UserRepository } from '../../../domain/repositories/user.repository';
 import { RegisterUserDto } from '../../../interfaces/dtos/user/register-user.dto';
 import { LoginUserDto } from '../../../interfaces/dtos/user/login-user.dto';
 
+/**
+ * Authentication service
+ * 
+ * Handles user authentication, registration, and token management
+ * following security best practices like password hashing and JWT token generation
+ */
 @Injectable()
 export class AuthService {
   private readonly SALT_ROUNDS = 10;
@@ -18,9 +24,11 @@ export class AuthService {
   ) {}
 
   /**
-   * Register a new user
-   * @param registerUserDto User registration data
-   * @returns The created user (without password)
+   * Register a new user in the system
+   * 
+   * @param registerUserDto - User registration data including email and password
+   * @returns The created user object without the password hash
+   * @throws UnauthorizedException if a user with the email already exists
    */
   async register(registerUserDto: RegisterUserDto): Promise<Omit<User, 'passwordHash'>> {
     const { email, password } = registerUserDto;
@@ -45,8 +53,10 @@ export class AuthService {
 
   /**
    * Authenticate a user and generate a JWT token
-   * @param loginUserDto User login credentials
-   * @returns JWT token and user information
+   * 
+   * @param loginUserDto - User login credentials with email and password
+   * @returns Object containing JWT token and user information (without password)
+   * @throws UnauthorizedException if credentials are invalid
    */
   async login(loginUserDto: LoginUserDto): Promise<{ token: string; user: Omit<User, 'passwordHash'> }> {
     const { email, password } = loginUserDto;
@@ -76,8 +86,10 @@ export class AuthService {
 
   /**
    * Logout a user by adding their token to a blacklist
-   * Note: In a real application, you might want to use Redis or another cache for the blacklist
-   * @param token JWT token
+   * 
+   * In a production environment, this should use a persistent store like Redis
+   * 
+   * @param token - JWT token to invalidate
    */
   logout(token: string): void {
     this.tokenBlacklist.add(token);
@@ -85,16 +97,18 @@ export class AuthService {
 
   /**
    * Verify if a token is valid (not in blacklist)
-   * @param token JWT token
-   * @returns True if valid, false otherwise
+   * 
+   * @param token - JWT token to verify
+   * @returns True if the token is valid, false if blacklisted
    */
   isTokenValid(token: string): boolean {
     return !this.tokenBlacklist.has(token);
   }
 
   /**
-   * Hash a password using bcrypt
-   * @param password Plain text password
+   * Hash a password using bcrypt with configured salt rounds
+   * 
+   * @param password - Plain text password
    * @returns Hashed password
    */
   private async hashPassword(password: string): Promise<string> {
@@ -102,10 +116,11 @@ export class AuthService {
   }
 
   /**
-   * Verify a password against a hash
-   * @param password Plain text password
-   * @param hash Hashed password
-   * @returns True if match, false otherwise
+   * Verify a password against a hash using bcrypt
+   * 
+   * @param password - Plain text password to verify
+   * @param hash - Hashed password to compare against
+   * @returns True if password matches hash, false otherwise
    */
   private async verifyPassword(password: string, hash: string): Promise<boolean> {
     return bcrypt.compare(password, hash);
@@ -113,8 +128,9 @@ export class AuthService {
 
   /**
    * Generate a JWT token for a user
-   * @param user User to generate token for
-   * @returns JWT token
+   * 
+   * @param user - User to generate token for
+   * @returns Signed JWT token
    */
   private generateToken(user: User): string {
     const payload = {

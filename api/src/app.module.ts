@@ -9,6 +9,12 @@ import { AuthController } from './interfaces/controllers/auth.controller';
 import { UserController } from './interfaces/controllers/user.controller';
 import { TypeOrmConfigModule } from './infrastructure/typeorm/typeorm.module';
 
+/**
+ * Main application module
+ * 
+ * This module is the entry point of the application and
+ * integrates all other modules together
+ */
 @Module({
   imports: [
     ConfigModule.forRoot({

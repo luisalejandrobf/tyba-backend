@@ -1,8 +1,18 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 /**
- * Custom decorator to extract the current authenticated user from the request
- * Usage: @CurrentUser() user: any
+ * Parameter decorator that extracts the authenticated user from the request
+ * 
+ * This decorator simplifies access to the current user in controller methods
+ * by extracting the user object that was previously attached by the JWT strategy
+ * 
+ * @example
+ * ```typescript
+ * @Get('profile')
+ * getProfile(@CurrentUser() user: UserDto) {
+ *   return user;
+ * }
+ * ```
  */
 export const CurrentUser = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {

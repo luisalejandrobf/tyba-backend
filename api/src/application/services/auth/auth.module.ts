@@ -6,6 +6,14 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { RepositoriesModule } from '../../../infrastructure/repositories/repositories.module';
 
+/**
+ * Authentication module
+ * 
+ * Configures and provides authentication-related services including:
+ * - JWT token generation and validation
+ * - Passport authentication strategies
+ * - User authentication services
+ */
 @Module({
   imports: [
     PassportModule,

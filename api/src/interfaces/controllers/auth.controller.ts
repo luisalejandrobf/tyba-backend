@@ -7,7 +7,13 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { ApiOperation, ApiResponse, ApiTags, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 
 /**
- * Controller handling authentication-related endpoints
+ * Authentication controller
+ * 
+ * Handles HTTP requests related to user authentication:
+ * - User registration
+ * - User login/authentication
+ * - User logout
+ * - Retrieving authenticated user profile
  */
 @Controller('auth')
 @ApiTags('auth')
@@ -16,7 +22,8 @@ export class AuthController {
 
   /**
    * Register a new user
-   * @param registerUserDto The user registration data
+   * 
+   * @param registerUserDto - The user registration data
    * @returns Newly created user data (without password)
    * 
    * Example request:
@@ -73,7 +80,8 @@ export class AuthController {
 
   /**
    * Authenticate a user and generate a JWT token
-   * @param loginUserDto The user login credentials
+   * 
+   * @param loginUserDto - The user login credentials
    * @returns JWT token and user information
    * 
    * Example request:
@@ -135,7 +143,8 @@ export class AuthController {
 
   /**
    * Logout a user by invalidating their JWT token
-   * @param req The request object containing the JWT token
+   * 
+   * @param req - The request object containing the JWT token
    * @returns Success message
    * 
    * Example request:
@@ -179,7 +188,8 @@ export class AuthController {
 
   /**
    * Get the profile of the authenticated user
-   * @param user The authenticated user data
+   * 
+   * @param user - The authenticated user data
    * @returns User profile data
    * 
    * Example request:

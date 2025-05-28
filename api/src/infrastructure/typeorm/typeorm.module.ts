@@ -3,6 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserEntity } from './entities/user.entity';
 
+/**
+ * TypeORM configuration module
+ * 
+ * This module configures the TypeORM connection to the PostgreSQL database
+ * and automatically creates tables if they don't exist via synchronize option. This is really helpful for the first time setup.
+ */
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({

@@ -2,6 +2,12 @@ import { IsEmail, IsString, MinLength, Matches, IsNotEmpty } from 'class-validat
 import { Match } from '../../../common/validators/match.validator';
 import { ApiProperty } from '@nestjs/swagger';
 
+/**
+ * Data transfer object for user registration
+ * 
+ * Contains the necessary fields for creating a new user account
+ * with validation rules to ensure data quality
+ */
 export class RegisterUserDto {
   @ApiProperty({
     description: 'User email address',

@@ -6,6 +6,12 @@ import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 
+/**
+ * JWT authentication strategy
+ * 
+ * Implements Passport JWT strategy for validating JWT tokens in requests
+ * and extracting user information from the payload
+ */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -22,6 +28,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  /**
+   * Validate the JWT token and extract user information
+   * 
+   * This method is called by Passport when a JWT token needs validation
+   * 
+   * @param request - Express request object containing the token
+   * @param payload - Decoded JWT payload containing user identifiers
+   * @returns User information to be attached to the request
+   * @throws UnauthorizedException if token is revoked or user not found
+   */
   async validate(request: Request, payload: any) {
     // Extract the token from the request
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);

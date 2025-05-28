@@ -7,7 +7,13 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 
 /**
- * Controller handling user-related endpoints
+ * User controller
+ * 
+ * Handles HTTP requests related to user operations:
+ * - Retrieving current user profile
+ * - Retrieving user by ID
+ * 
+ * All endpoints in this controller require authentication
  */
 @ApiTags('users')
 @Controller('users')
@@ -21,8 +27,10 @@ export class UserController {
 
   /**
    * Get the current user's profile
-   * @param user The authenticated user from the request
-   * @returns Current user data
+   * 
+   * @param user - The authenticated user from the request
+   * @returns Current user data without sensitive information
+   * @throws NotFoundException if the user is not found
    * 
    * Example request:
    * ```
@@ -77,9 +85,11 @@ export class UserController {
   }
 
   /**
-   * Get a user by ID (only accessible to authenticated users)
-   * @param id The ID of the user to retrieve
-   * @returns User data
+   * Get a user by ID
+   * 
+   * @param id - The ID of the user to retrieve
+   * @returns User data without sensitive information
+   * @throws NotFoundException if the user is not found
    * 
    * Example request:
    * ```
