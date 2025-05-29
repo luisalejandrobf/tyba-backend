@@ -31,6 +31,7 @@ export function Match(property: string, validationOptions?: ValidationOptions) {
       validator: {
         /**
          * Validates if the value matches the related property value
+         * Uses any type for flexibility, so it can be used with any property
          */
         validate(value: any, args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints;

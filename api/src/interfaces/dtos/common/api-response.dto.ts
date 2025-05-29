@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
  * Standard API response data transfer object
  * 
  * This class provides a consistent structure for all API responses
- * with success status, message, data payload, and optional error details.
+ * with success status, message, data payload, and optional error details that can be any type.
  * 
  * @template T The type of data contained in the response
  */
