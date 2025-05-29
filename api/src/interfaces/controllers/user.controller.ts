@@ -4,7 +4,8 @@ import { ApiResponseDto } from '../dtos/common/api-response.dto';
 import { Inject } from '@nestjs/common';
 import { UserRepository } from '../../domain/repositories/user.repository';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth, ApiParam, ApiExcludeController } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth, ApiParam, ApiExcludeController, ApiExtraModels } from '@nestjs/swagger';
+import { UserDto } from '../dtos/user';
 
 /**
  * User controller
@@ -21,6 +22,7 @@ import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth, ApiParam, ApiExclude
 @Controller('users')
 @UseGuards(JwtAuthGuard) // Protect all routes in this controller
 @ApiBearerAuth()
+@ApiExtraModels(UserDto, ApiResponseDto)
 export class UserController {
   constructor(
     @Inject('UserRepository')
@@ -56,15 +58,21 @@ export class UserController {
    */
   @Get('me')
   @HttpCode(HttpStatus.OK)
-  async getMe(@CurrentUser() user: any): Promise<ApiResponseDto<any>> {
+  async getMe(@CurrentUser() user: UserDto): Promise<ApiResponseDto<UserDto>> {
     const userEntity = await this.userRepository.findById(user.id);
     if (!userEntity) {
       throw new NotFoundException('User not found');
     }
     
     // Return user without password hash
-    const { passwordHash: _, ...userWithoutPassword } = userEntity as any;
-    return ApiResponseDto.success('User profile retrieved successfully', userWithoutPassword);
+    const userDto: UserDto = {
+      id: userEntity.id,
+      email: userEntity.email,
+      createdAt: userEntity.createdAt,
+      updatedAt: userEntity.updatedAt
+    };
+    
+    return ApiResponseDto.success('User profile retrieved successfully', userDto);
   }
 
   /**
@@ -96,14 +104,20 @@ export class UserController {
    */
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async getUserById(@Param('id') id: string): Promise<ApiResponseDto<any>> {
+  async getUserById(@Param('id') id: string): Promise<ApiResponseDto<UserDto>> {
     const user = await this.userRepository.findById(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
     
     // Return user without password hash
-    const { passwordHash: _, ...userWithoutPassword } = user as any;
-    return ApiResponseDto.success('User retrieved successfully', userWithoutPassword);
+    const userDto: UserDto = {
+      id: user.id,
+      email: user.email,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    };
+    
+    return ApiResponseDto.success('User retrieved successfully', userDto);
   }
 } 

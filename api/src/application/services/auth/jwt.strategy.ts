@@ -5,6 +5,7 @@ import { UserRepository } from '../../../domain/repositories/user.repository';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
+import { JwtPayloadDto, UserDto } from '../../../interfaces/dtos/user/user.dto';
 
 /**
  * JWT authentication strategy
@@ -38,7 +39,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * @returns User information to be attached to the request
    * @throws UnauthorizedException if token is revoked or user not found
    */
-  async validate(request: Request, payload: any) {
+  async validate(request: Request, payload: JwtPayloadDto): Promise<UserDto> {
     // Extract the token from the request
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
     

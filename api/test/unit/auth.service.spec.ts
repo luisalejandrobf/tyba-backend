@@ -7,15 +7,7 @@ import { User } from '../../src/domain/entities/user.entity';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AppModule } from '../../src/app.module';
-
-// Define an interface that matches the actual structure returned by the service
-interface UserResponse {
-  _id: string;
-  _email: string;
-  _createdAt: Date;
-  _updatedAt: Date;
-  _passwordHash: string; // It's actually included
-}
+import { UserDto } from '../../src/interfaces/dtos/user/user.dto';
 
 // Tests the auth service for unit
 describe('AuthService', () => {
@@ -49,22 +41,14 @@ describe('AuthService', () => {
 
       const result = await service.register(registerUserDto);
       
-      // Handle the result according to the actual structure using conversion through unknown
-      const userResponse = result as unknown as UserResponse;
+      expect(result).toBeDefined();
+      expect(typeof result).toBe('object');
       
-      expect(userResponse).toBeDefined();
-      expect(typeof userResponse).toBe('object');
-      
-      // Verify the properties according to the actual structure
-      expect(userResponse._id).toBeDefined();
-      expect(userResponse._email).toBe(registerUserDto.email);
-      expect(userResponse._createdAt).toBeDefined();
-      expect(userResponse._updatedAt).toBeDefined();
-      
-      // Verify that the passwordHash is included but is a valid hash
-      expect(userResponse._passwordHash).toBeDefined();
-      expect(typeof userResponse._passwordHash).toBe('string');
-      expect(userResponse._passwordHash.startsWith('$2b$')).toBe(true); // Starts with bcrypt prefix
+      // Verify the properties according to the UserDto structure
+      expect(result.id).toBeDefined();
+      expect(result.email).toBe(registerUserDto.email);
+      expect(result.createdAt).toBeDefined();
+      expect(result.updatedAt).toBeDefined();
     });
 
     it('should throw UnauthorizedException if user already exists', async () => {
@@ -106,19 +90,11 @@ describe('AuthService', () => {
       expect(result.token).toBeDefined();
       expect(result.user).toBeDefined();
       
-      // Handle the user according to the actual structure using conversion through unknown
-      const userResponse = result.user as unknown as UserResponse;
-      
       // Verify the specific properties of the user
-      expect(userResponse._id).toBeDefined();
-      expect(userResponse._email).toBe(email);
-      expect(userResponse._createdAt).toBeDefined();
-      expect(userResponse._updatedAt).toBeDefined();
-      
-      // Verify that the passwordHash is included but is a valid hash
-      expect(userResponse._passwordHash).toBeDefined();
-      expect(typeof userResponse._passwordHash).toBe('string');
-      expect(userResponse._passwordHash.startsWith('$2b$')).toBe(true); // Starts with bcrypt prefix
+      expect(result.user.id).toBeDefined();
+      expect(result.user.email).toBe(email);
+      expect(result.user.createdAt).toBeDefined();
+      expect(result.user.updatedAt).toBeDefined();
     });
 
     it('should throw UnauthorizedException if user not found', async () => {

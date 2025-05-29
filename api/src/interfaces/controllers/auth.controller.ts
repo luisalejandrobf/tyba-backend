@@ -1,10 +1,11 @@
 import { Body, Controller, Post, UseGuards, Request, Get, HttpStatus, HttpCode } from '@nestjs/common';
 import { AuthService } from '../../application/services/auth/auth.service';
-import { RegisterUserDto, LoginUserDto } from '../dtos/user';
+import { RegisterUserDto, LoginUserDto, UserDto, JwtPayloadDto } from '../dtos/user';
 import { ApiResponseDto } from '../dtos/common/api-response.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ApiOperation, ApiResponse, ApiTags, ApiBody, ApiBearerAuth, ApiExtraModels } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiBody, ApiBearerAuth, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
+import { Request as ExpressRequest } from 'express';
 
 /**
  * Authentication controller
@@ -17,7 +18,7 @@ import { ApiOperation, ApiResponse, ApiTags, ApiBody, ApiBearerAuth, ApiExtraMod
  */
 @Controller('auth')
 @ApiTags('auth')
-@ApiExtraModels(RegisterUserDto, LoginUserDto, ApiResponseDto)
+@ApiExtraModels(RegisterUserDto, LoginUserDto, UserDto, JwtPayloadDto, ApiResponseDto)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -61,6 +62,14 @@ export class AuthController {
     status: HttpStatus.CREATED, 
     description: 'User has been successfully registered',
     schema: {
+      allOf: [
+        { $ref: getSchemaPath(ApiResponseDto) },
+        {
+          properties: {
+            data: { $ref: getSchemaPath(UserDto) }
+          }
+        }
+      ],
       example: {
         success: true,
         message: 'User registered successfully',
@@ -74,7 +83,7 @@ export class AuthController {
     }
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Validation error or user already exists' })
-  async register(@Body() registerUserDto: RegisterUserDto): Promise<ApiResponseDto<any>> {
+  async register(@Body() registerUserDto: RegisterUserDto): Promise<ApiResponseDto<UserDto>> {
     const user = await this.authService.register(registerUserDto);
     return ApiResponseDto.success('User registered successfully', user);
   }
@@ -121,6 +130,20 @@ export class AuthController {
     status: HttpStatus.OK, 
     description: 'User has been successfully logged in',
     schema: {
+      allOf: [
+        { $ref: getSchemaPath(ApiResponseDto) },
+        {
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                token: { type: 'string' },
+                user: { $ref: getSchemaPath(UserDto) }
+              }
+            }
+          }
+        }
+      ],
       example: {
         success: true,
         message: 'Login successful',
@@ -137,7 +160,7 @@ export class AuthController {
     }
   })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Invalid credentials' })
-  async login(@Body() loginUserDto: LoginUserDto): Promise<ApiResponseDto<any>> {
+  async login(@Body() loginUserDto: LoginUserDto): Promise<ApiResponseDto<{ token: string; user: UserDto }>> {
     const result = await this.authService.login(loginUserDto);
     return ApiResponseDto.success('Login successful', result);
   }
@@ -171,6 +194,9 @@ export class AuthController {
     status: HttpStatus.OK, 
     description: 'User has been successfully logged out',
     schema: {
+      allOf: [
+        { $ref: getSchemaPath(ApiResponseDto) }
+      ],
       example: {
         success: true,
         message: 'Logout successful'
@@ -178,7 +204,7 @@ export class AuthController {
     }
   })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Invalid or missing token' })
-  async logout(@Request() req): Promise<ApiResponseDto<null>> {
+  async logout(@Request() req: ExpressRequest): Promise<ApiResponseDto<null>> {
     // Extract token from Authorization header
     const token = req.headers.authorization?.split(' ')[1];
     if (token) {
@@ -220,6 +246,14 @@ export class AuthController {
     status: HttpStatus.OK, 
     description: 'User profile has been successfully retrieved',
     schema: {
+      allOf: [
+        { $ref: getSchemaPath(ApiResponseDto) },
+        {
+          properties: {
+            data: { $ref: getSchemaPath(UserDto) }
+          }
+        }
+      ],
       example: {
         success: true,
         message: 'Profile retrieved successfully',
@@ -231,7 +265,7 @@ export class AuthController {
     }
   })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Invalid or missing token' })
-  getProfile(@CurrentUser() user: any): ApiResponseDto<any> {
+  getProfile(@CurrentUser() user: UserDto): ApiResponseDto<UserDto> {
     return ApiResponseDto.success('Profile retrieved successfully', user);
   }
 } 

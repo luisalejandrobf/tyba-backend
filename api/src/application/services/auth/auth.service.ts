@@ -5,6 +5,7 @@ import { User } from '../../../domain/entities/user.entity';
 import { UserRepository } from '../../../domain/repositories/user.repository';
 import { RegisterUserDto } from '../../../interfaces/dtos/user/register-user.dto';
 import { LoginUserDto } from '../../../interfaces/dtos/user/login-user.dto';
+import { JwtPayloadDto, UserDto } from '../../../interfaces/dtos/user/user.dto';
 
 /**
  * Authentication service
@@ -30,7 +31,7 @@ export class AuthService {
    * @returns The created user object without the password hash
    * @throws UnauthorizedException if a user with the email already exists
    */
-  async register(registerUserDto: RegisterUserDto): Promise<Omit<User, 'passwordHash'>> {
+  async register(registerUserDto: RegisterUserDto): Promise<UserDto> {
     const { email, password } = registerUserDto;
 
     // Check if user already exists
@@ -47,8 +48,13 @@ export class AuthService {
     const createdUser = await this.userRepository.createUser(user);
 
     // Return user without passwordHash
-    const { passwordHash: _, ...userWithoutPassword } = createdUser as any;
-    return userWithoutPassword;
+    const { passwordHash: _, ...userWithoutPassword } = createdUser as User;
+    return {
+      id: createdUser.id,
+      email: createdUser.email,
+      createdAt: createdUser.createdAt,
+      updatedAt: createdUser.updatedAt
+    };
   }
 
   /**
@@ -58,7 +64,7 @@ export class AuthService {
    * @returns Object containing JWT token and user information (without password)
    * @throws UnauthorizedException if credentials are invalid
    */
-  async login(loginUserDto: LoginUserDto): Promise<{ token: string; user: Omit<User, 'passwordHash'> }> {
+  async login(loginUserDto: LoginUserDto): Promise<{ token: string; user: UserDto }> {
     const { email, password } = loginUserDto;
 
     // Find user by email
@@ -77,10 +83,16 @@ export class AuthService {
     const token = this.generateToken(user);
 
     // Return token and user without passwordHash
-    const { passwordHash: _, ...userWithoutPassword } = user as any;
+    const userDto: UserDto = {
+      id: user.id,
+      email: user.email,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    };
+    
     return {
       token,
-      user: userWithoutPassword,
+      user: userDto,
     };
   }
 
@@ -133,7 +145,7 @@ export class AuthService {
    * @returns Signed JWT token
    */
   private generateToken(user: User): string {
-    const payload = {
+    const payload: JwtPayloadDto = {
       sub: user.id,
       email: user.email,
     };

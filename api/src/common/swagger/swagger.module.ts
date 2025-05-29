@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ApiExtraModels } from '@nestjs/swagger';
-import { RegisterUserDto, LoginUserDto } from '../../interfaces/dtos/user';
+import { RegisterUserDto, LoginUserDto, UserDto, JwtPayloadDto } from '../../interfaces/dtos/user';
 import { TransactionResponseDto } from '../../interfaces/dtos/transaction/transaction-response.dto';
 import { FindNearbyRestaurantsDto } from '../../interfaces/dtos/restaurant/find-nearby-restaurants.dto';
 import { RestaurantResponseDto } from '../../interfaces/dtos/restaurant/restaurant-response.dto';
@@ -15,6 +15,8 @@ import { ApiResponseDto } from '../../interfaces/dtos/common/api-response.dto';
 @ApiExtraModels(
   RegisterUserDto,
   LoginUserDto,
+  UserDto,
+  JwtPayloadDto,
   TransactionResponseDto,
   FindNearbyRestaurantsDto,
   RestaurantResponseDto,

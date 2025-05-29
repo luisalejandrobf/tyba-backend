@@ -1,6 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 /**
+ * Error details interface for API responses
+ */
+export interface ErrorDetails {
+  message?: string;
+  field?: string;
+  code?: string;
+  [key: string]: unknown;
+}
+
+/**
  * Standard API response data transfer object
  * 
  * This class provides a consistent structure for all API responses
@@ -33,7 +43,7 @@ export class ApiResponseDto<T> {
     example: null,
     required: false,
   })
-  error?: any;
+  error?: ErrorDetails | null;
 
   /**
    * Private constructor to enforce factory method usage
@@ -43,7 +53,7 @@ export class ApiResponseDto<T> {
    * @param data - Optional data payload
    * @param error - Optional error details
    */
-  private constructor(success: boolean, message: string, data?: T, error?: any) {
+  private constructor(success: boolean, message: string, data?: T, error?: ErrorDetails | null) {
     this.success = success;
     this.message = message;
     this.data = data;
@@ -68,7 +78,7 @@ export class ApiResponseDto<T> {
    * @param error - Optional error details
    * @returns An error API response
    */
-  static error<T>(message: string, error?: any): ApiResponseDto<T> {
+  static error<T>(message: string, error?: ErrorDetails | null): ApiResponseDto<T> {
     return new ApiResponseDto<T>(false, message, undefined, error);
   }
 } 
