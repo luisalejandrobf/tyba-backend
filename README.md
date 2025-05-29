@@ -44,6 +44,7 @@ The application implements a **Hexagonal Architecture** (also known as Ports and
 - **TypeORM**: Database connection and configuration
   - Entity definitions for database mapping
   - Migration management
+- **Mappers**: Mapper implementations for transforming data between domain and ORM entities
 
 ### Interfaces Layer
 - **Controllers**: API endpoints
@@ -252,7 +253,8 @@ This project follows several best practices:
 12. **Testing**: Jest for unit and integration tests
 13. **TypeORM**: Database abstraction layer
 14. **TypeScript usage**: Static type system for better code quality and maintainability
-15. **Git Ignore**: .env file is not added to the repository, as well as dist files and node_modules folder.
+15. **Mapper Pattern**: Mapper implementations for transforming data between domain and ORM entities
+16. **Git Ignore**: .env file is not added to the repository, as well as dist files and node_modules folder.
 
 ## Features
 
@@ -410,6 +412,7 @@ The project is structured as follows:
 │   │   │   ├── entities/
 │   │   │   └── repositories/
 │   │   ├── infrastructure/ # External services and data access
+│   │   │   ├── mappers/
 │   │   │   ├── repositories/
 │   │   │   └── typeorm/
 │   │   ├── interfaces/  # Controllers, DTOs

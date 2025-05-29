@@ -80,45 +80,4 @@ export class Restaurant {
   get openingHours(): string | undefined {
     return this._openingHours;
   }
-
-  /**
-   * Factory method for creating a Restaurant instance from OpenStreetMap data
-   * 
-   * @param osmNode - The OpenStreetMap node data
-   * @returns A Restaurant instance
-   */
-  static fromOsmData(osmNode: any): Restaurant {
-    // Extract the tags and base properties
-    const { id, lat, lon, tags } = osmNode;
-    
-    // Format address from components if available
-    let address: string | undefined;
-    if (tags['addr:housenumber'] && tags['addr:street']) {
-      address = `${tags['addr:housenumber']} ${tags['addr:street']}`;
-      
-      if (tags['addr:city']) {
-        address += `, ${tags['addr:city']}`;
-      }
-      
-      if (tags['addr:state']) {
-        address += `, ${tags['addr:state']}`;
-      }
-      
-      if (tags['addr:postcode']) {
-        address += ` ${tags['addr:postcode']}`;
-      }
-    }
-
-    return new Restaurant(
-      id.toString(),
-      tags.name || 'Unnamed Restaurant',
-      lat,
-      lon,
-      address,
-      tags.cuisine,
-      tags.phone,
-      tags.website,
-      tags.opening_hours,
-    );
-  }
 } 

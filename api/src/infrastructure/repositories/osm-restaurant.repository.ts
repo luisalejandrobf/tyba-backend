@@ -5,6 +5,16 @@ import { Restaurant } from '../../domain/entities/restaurant.entity';
 import { lastValueFrom } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AxiosError } from 'axios';
+import { OsmRestaurantMapper } from '../mappers/osm-restaurant.mapper';
+
+/**
+ * Interface for OpenStreetMap Overpass API response
+ */
+interface OverpassResponse {
+  elements: any[];
+  version: number;
+  generator: string;
+}
 
 /**
  * OpenStreetMap restaurant repository implementation
@@ -17,7 +27,10 @@ export class OsmRestaurantRepository implements RestaurantRepository {
   private readonly logger = new Logger(OsmRestaurantRepository.name);
   private readonly overpassApiUrl = 'https://overpass-api.de/api/interpreter';
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly restaurantMapper: OsmRestaurantMapper,
+  ) {}
 
   /**
    * Find restaurants near the given coordinates using OpenStreetMap
@@ -48,7 +61,7 @@ export class OsmRestaurantRepository implements RestaurantRepository {
     try {
       // Make the request to Overpass API
       const response = await lastValueFrom(
-        this.httpService.get(this.overpassApiUrl, {
+        this.httpService.get<OverpassResponse>(this.overpassApiUrl, {
           params: { data: query },
         }).pipe(
           map((response) => response.data),
@@ -59,12 +72,8 @@ export class OsmRestaurantRepository implements RestaurantRepository {
         ),
       );
 
-      // Filter for nodes only (for simplicity) and map to Restaurant domain entities
-      const restaurants = response.elements
-        .filter((element) => element.type === 'node' && element.tags && element.tags.name)
-        .map((node) => Restaurant.fromOsmData(node));
-
-      return restaurants;
+      // Use the mapper to transform OSM data to domain entities
+      return this.restaurantMapper.mapToRestaurants(response.elements);
     } catch (error) {
       this.logger.error(`Failed to fetch restaurants: ${error.message}`);
       return []; // Return empty array in case of error

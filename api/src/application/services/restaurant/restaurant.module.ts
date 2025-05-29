@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { RestaurantService } from './restaurant.service';
 import { OsmRestaurantRepository } from '../../../infrastructure/repositories/osm-restaurant.repository';
+import { OsmRestaurantMapper } from '../../../infrastructure/mappers/osm-restaurant.mapper';
 
 /**
  * Restaurant module
@@ -14,6 +15,7 @@ import { OsmRestaurantRepository } from '../../../infrastructure/repositories/os
   ],
   providers: [
     RestaurantService,
+    OsmRestaurantMapper,
     {
       provide: 'RestaurantRepository',
       useClass: OsmRestaurantRepository,
