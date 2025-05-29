@@ -15,6 +15,7 @@ import { TransactionController } from './interfaces/controllers/transaction.cont
 import { TypeOrmConfigModule } from './infrastructure/typeorm/typeorm.module';
 import { MiddlewaresModule } from './common/middlewares/middlewares.module';
 import { TransactionLoggerMiddleware } from './common/middlewares/transaction-logger.middleware';
+import { SwaggerModule } from './common/swagger/swagger.module';
 
 /**
  * Main application module
@@ -38,6 +39,7 @@ import { TransactionLoggerMiddleware } from './common/middlewares/transaction-lo
     RestaurantModule,
     TransactionModule,
     MiddlewaresModule,
+    SwaggerModule,
   ],
   controllers: [
     AppController, 

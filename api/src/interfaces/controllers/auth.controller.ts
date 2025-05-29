@@ -4,7 +4,7 @@ import { RegisterUserDto, LoginUserDto } from '../dtos/user';
 import { ApiResponseDto } from '../dtos/common/api-response.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ApiOperation, ApiResponse, ApiTags, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiBody, ApiBearerAuth, ApiExtraModels } from '@nestjs/swagger';
 
 /**
  * Authentication controller
@@ -17,6 +17,7 @@ import { ApiOperation, ApiResponse, ApiTags, ApiBody, ApiBearerAuth } from '@nes
  */
 @Controller('auth')
 @ApiTags('auth')
+@ApiExtraModels(RegisterUserDto, LoginUserDto, ApiResponseDto)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

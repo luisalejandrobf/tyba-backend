@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiExtraModels } from '@nestjs/swagger';
 import { TransactionService } from '../../application/services/transaction/transaction.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -16,6 +16,7 @@ import { ApiResponseDto } from '../dtos/common/api-response.dto';
 @ApiTags('transactions')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
+@ApiExtraModels(TransactionResponseDto, ApiResponseDto)
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
@@ -36,6 +37,7 @@ export class TransactionController {
   @ApiResponse({
     status: 200,
     description: 'List of transactions for the authenticated user',
+    type: ApiResponseDto,
     schema: {
       example: {
         success: true,

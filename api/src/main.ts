@@ -3,6 +3,11 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from './common/pipes/validation.pipe';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from '@nestjs/common';
+import { RegisterUserDto, LoginUserDto } from './interfaces/dtos/user';
+import { TransactionResponseDto } from './interfaces/dtos/transaction/transaction-response.dto';
+import { FindNearbyRestaurantsDto } from './interfaces/dtos/restaurant/find-nearby-restaurants.dto';
+import { RestaurantResponseDto } from './interfaces/dtos/restaurant/restaurant-response.dto';
+import { ApiResponseDto } from './interfaces/dtos/common/api-response.dto';
 
 /**
  * Application bootstrap function
@@ -32,14 +37,36 @@ async function bootstrap() {
     .setDescription('The Tyba Backend API documentation')
     .setVersion('1.0')
     .addTag('auth', 'Authentication endpoints')
-    .addTag('users', 'User endpoints')
+    // .addTag('users', 'User endpoints')
     .addTag('restaurants', 'Restaurant search endpoints')
     .addTag('transactions', 'Transaction history endpoints')
     .addBearerAuth()
     .build();
   
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs', app, document);
+  const document = SwaggerModule.createDocument(app, config, {
+    extraModels: [
+      RegisterUserDto,
+      LoginUserDto,
+      TransactionResponseDto,
+      FindNearbyRestaurantsDto,
+      RestaurantResponseDto,
+      ApiResponseDto
+    ],
+    deepScanRoutes: true
+  });
+  
+  const options = {
+    swaggerOptions: {
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+      docExpansion: 'list',
+      defaultModelsExpandDepth: 1,
+      defaultModelExpandDepth: 1,
+      displayRequestDuration: true,
+    }
+  };
+  
+  SwaggerModule.setup('api-docs', app, document, options);
   logger.log('Swagger documentation setup at /api-docs');
   
   // Start the server on the configured port or default to 3000

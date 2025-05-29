@@ -1,5 +1,5 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiExtraModels } from '@nestjs/swagger';
 import { RestaurantService } from '../../application/services/restaurant/restaurant.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { FindNearbyRestaurantsDto } from '../dtos/restaurant/find-nearby-restaurants.dto';
@@ -16,6 +16,7 @@ import { ApiResponseDto } from '../dtos/common/api-response.dto';
 @ApiTags('restaurants')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
+@ApiExtraModels(FindNearbyRestaurantsDto, RestaurantResponseDto, ApiResponseDto)
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
@@ -41,6 +42,7 @@ export class RestaurantController {
   @ApiResponse({
     status: 200,
     description: 'List of restaurants found near the specified location',
+    type: ApiResponseDto,
     schema: {
       example: {
         success: true,
