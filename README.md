@@ -260,7 +260,8 @@ This project follows several best practices:
 
 1. **Authentication**
    - User registration
-   - User login
+   - User login - logout
+   - Self profile retrieval
    - JWT-based authentication
 
 2. **Restaurant Search**
