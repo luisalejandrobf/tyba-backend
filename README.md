@@ -1,4 +1,4 @@
-# Tyba Backend Test
+# Tyba Backend Test. By: Luis Alejandro Bravo Ferreira
 
 ## Overview
 
@@ -84,6 +84,13 @@ TypeORM was chosen as the database abstraction layer because:
 - Repository pattern support that aligns with the clean architecture approach
 - Active community and good documentation
 
+### Database choice: PostgreSQL
+The database choice was PostgreSQL because:
+- It is a powerful, open-source relational database that is widely used in the industry
+- It provides a robust set of features and a strong ecosystem
+- It is well-suited for the application's requirements
+- It can easily be changed to another database if needed
+
 ### Authentication Strategy: JWT
 JWT-based authentication was selected because:
 - Stateless nature fits well with RESTful APIs
@@ -147,6 +154,11 @@ This project follows several best practices:
 8. **Environment Configuration**: Separation of configuration from code
 9. **API Documentation**: Swagger/OpenAPI specification
 10. **Containerization**: Docker for consistent development and deployment environments
+11. **Hashing**: Bcrypt for password hashing
+12. **Testing**: Jest for unit and integration tests
+13. **TypeORM**: Database abstraction layer
+14. **TypeScript usage**: Static type system for better code quality and maintainability
+15. **Git Ignore**: .env file is not added to the repository, as well as dist files and node_modules folder.
 
 ## Features
 
@@ -170,12 +182,14 @@ The API includes the following endpoints:
 - **Auth**
   - POST /auth/register - Register a new user
   - POST /auth/login - Authenticate a user
+  - POST /auth/logout - Logout a user
+  - GET /auth/profile - Get the current user profile
 
 - **Restaurants**
-  - GET /restaurants/nearby - Find nearby restaurants
+  - GET /restaurants - Find restaurants using a lat/long or a City name
 
 - **Transactions**
-  - GET /transactions - Get transaction history
+  - GET /transactions - Get transaction history for the current user
 
 ### API Documentation
 
@@ -199,6 +213,7 @@ http://localhost:3000/api-docs
    git clone <repository-url>
    cd tyba-backend-test
    ```
+Remember that everything is inside the api folder.
 
 2. Set up environment variables:
    ```bash
@@ -226,7 +241,7 @@ http://localhost:3000/api-docs
 
 ### Running with Docker
 
-The easiest way to run the application is using Docker Compose:
+The easiest way to run the application is using Docker Compose from the root folder:
 
 ```bash
 docker-compose up
@@ -275,38 +290,41 @@ npm run test:integration
 The project is structured as follows:
 
 ```
-api/
-├── dist/                 # Compiled JavaScript files
-├── src/
-│   ├── application/      # Application services
+/
+├── api/                 # NestJS API service
+│   ├── dist/            # Compiled JavaScript files
+│   ├── src/
+│   │   ├── application/ # Application services
 │   │   └── services/
-│   │       ├── auth/     # Authentication service
+│   │       ├── auth/    # Authentication service
 │   │       ├── restaurant/ # Restaurant service
 │   │       └── transaction/ # Transaction service
-│   ├── common/           # Shared utilities, pipes, middlewares
-│   ├── config/           # Configuration
-│   ├── domain/           # Domain entities and repositories
-│   │   ├── entities/
-│   │   └── repositories/
-│   ├── infrastructure/   # External services and data access
-│   │   ├── repositories/
-│   │   └── typeorm/
-│   ├── interfaces/       # Controllers, DTOs
-│   │   ├── controllers/
-│   │   └── dtos/
-│   ├── app.controller.ts
-│   ├── app.module.ts
-│   ├── app.service.ts
-│   └── main.ts
-├── test/                 # Test files
-│   ├── integration/      # Integration tests
-│   ├── unit/             # Unit tests
-│   └── utils/            # Test utilities
-├── .env                  # Environment variables
-├── .env.example          # Example environment variables
-├── Dockerfile            # Docker configuration
-├── jest.config.integration.js # Jest configuration for integration tests
-├── jest.config.unit.js   # Jest configuration for unit tests
-├── package.json          # Project dependencies and scripts
-└── tsconfig.json         # TypeScript configuration
+│   │   ├── common/      # Shared utilities, pipes, middlewares
+│   │   ├── config/      # Configuration
+│   │   ├── domain/      # Domain entities and repositories
+│   │   │   ├── entities/
+│   │   │   └── repositories/
+│   │   ├── infrastructure/ # External services and data access
+│   │   │   ├── repositories/
+│   │   │   └── typeorm/
+│   │   ├── interfaces/  # Controllers, DTOs
+│   │   │   ├── controllers/
+│   │   │   └── dtos/
+│   │   ├── app.controller.ts
+│   │   ├── app.module.ts
+│   │   ├── app.service.ts
+│   │   └── main.ts
+│   ├── test/            # Test files
+│   │   ├── README.md    # Test documentation
+│   │   ├── integration/ # Integration tests
+│   │   └── unit/        # Unit tests
+│   ├── .env             # Environment variables
+│   ├── .env.example     # Example environment variables
+│   ├── Dockerfile       # Docker configuration
+│   ├── jest.config.integration.js # Jest configuration for integration tests
+│   ├── jest.config.unit.js # Jest configuration for unit tests
+│   ├── package.json     # Project dependencies and scripts
+│   └── tsconfig.json    # TypeScript configuration
+├── docker-compose.yml    # Docker Compose configuration (API and DB)
+└── README.md            # Project documentation
 ```
