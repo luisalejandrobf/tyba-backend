@@ -8,6 +8,10 @@ This project is a RESTful API built with NestJS that provides authentication, re
 
 The application implements a **Hexagonal Architecture** (also known as Ports and Adapters pattern), which is a form of Clean Architecture. This architectural style isolates the core business logic from external concerns, making the system more maintainable, testable, and adaptable to change.
 
+<p align="center">
+  <img src="others/ArchitectureDiagram.png" alt="Architecture Diagram">
+</p>
+
 ### Architectural Benefits
 
 - **Technology Independence**: The domain and application layers are isolated from infrastructure concerns, allowing for framework, database, or external service changes with minimal impact on business logic.
@@ -50,6 +54,94 @@ The application implements a **Hexagonal Architecture** (also known as Ports and
   - Input validation with class-validator
   - Response structure standardization
   - API documentation with Swagger decorators
+
+## Database Entities
+
+The application uses TypeORM to map domain entities to database tables. The main database entities are:
+
+<p align="center">
+  <img src="others/RelationalDiagram.png" alt="Relational Diagram">
+</p>
+
+### User Entity
+
+The User entity represents registered users in the system and is stored in the `users` table:
+
+```typescript
+@Entity('users')
+export class UserEntity {
+  @PrimaryColumn()
+  id: string;
+
+  @Column({ unique: true })
+  email: string;
+
+  @Column()
+  passwordHash: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+}
+```
+
+Key characteristics:
+- UUID as primary key for better security and distribution
+- Unique email constraint to prevent duplicate accounts
+- Securely hashed passwords (never stored in plain text)
+- Automatic timestamp tracking for creation and updates
+
+### Transaction Entity
+
+The Transaction entity logs all API requests and is stored in the `transactions` table:
+
+```typescript
+@Entity('transactions')
+export class TransactionEntity {
+  @PrimaryColumn()
+  id: string;
+
+  @Column()
+  userId: string;
+
+  @Column({
+    type: 'varchar',
+    length: 20,
+    default: TransactionType.TRANSACTION
+  })
+  type: string;
+
+  @Column()
+  endpoint: string;
+
+  @Column({ type: 'text' })
+  params: string;
+
+  @Column()
+  description: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+}
+```
+
+Key characteristics:
+- UUID as primary key
+- Association with users for tracking who performed actions
+- Transaction type classification
+- Storage of endpoint path and request parameters
+- Descriptive information about the transaction
+- Automatic timestamp for audit trail
+
+### Database Schema Separation
+
+The database entities are intentionally separate from domain entities to:
+- Prevent ORM-specific annotations from polluting the domain model
+- Allow the domain model to evolve independently from database schema
+- Enable different persistence strategies without changing domain logic
+- Support the clean architecture's separation of concerns principle
 
 ## Design Decisions
 
@@ -139,6 +231,8 @@ A typical request flow (e.g., user registration):
 - **Containerization**: Docker & Docker Compose
 - **Validation**: class-validator
 - **HTTP Client**: axios
+- **Bcrypt**: For password hashing
+- **Overpass Turbo API**: For restaurant search
 
 ## Code Quality and Best Practices
 
@@ -197,6 +291,17 @@ The API documentation is available via Swagger UI at:
 ```
 http://localhost:3000/api-docs
 ```
+
+## Token Management
+
+The application implements a stateless JWT authentication system:
+
+- **Storage**: Tokens are stored client-side with an in-memory blacklist for revoked tokens
+- **Implementation**: Uses NestJS JwtService and Passport-JWT strategy
+- **Security**: Tokens contain user ID and email, with configurable expiration (default: 1h)
+- **Validation**: JwtAuthGuard protects routes, JwtStrategy validates tokens and checks blacklist
+- **Limitation**: In-memory blacklist clears on server restart (Redis is recommended for production or a more robust solution)
+
 
 ## Getting Started
 
