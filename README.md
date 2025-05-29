@@ -9,7 +9,7 @@ This project is a RESTful API built with NestJS that provides authentication, re
 The application implements a **Hexagonal Architecture** (also known as Ports and Adapters pattern), which is a form of Clean Architecture. This architectural style isolates the core business logic from external concerns, making the system more maintainable, testable, and adaptable to change.
 
 <p align="center">
-  <img src="others/ArchitectureDiagram.png" alt="Architecture Diagram">
+  <img src="others/ArchitectureDiagram.png" alt="Architecture Diagram" height="400">
 </p>
 
 ### Architectural Benefits
@@ -60,7 +60,7 @@ The application implements a **Hexagonal Architecture** (also known as Ports and
 The application uses TypeORM to map domain entities to database tables. The main database entities are:
 
 <p align="center">
-  <img src="others/RelationalDiagram.png" alt="Relational Diagram">
+  <img src="others/RelationalDiagram.png" alt="Relational Diagram" height="400">
 </p>
 
 ### User Entity
