@@ -4,7 +4,7 @@
 
 This project is a RESTful API built with NestJS that provides authentication, restaurant search, and transaction logging functionality. The application follows a clean architecture approach with distinct layers for domain, application, infrastructure, and interfaces.
 
-For a brief summary of my work, please visit [others\LuisAlejandroBravoFerreira_BackendEngineer_Tyba.pdf](others\LuisAlejandroBravoFerreira_BackendEngineer_Tyba.pdf).
+For a brief summary of my work, please visit [others/LuisAlejandroBravoFerreira_BackendEngineer_Tyba.pdf](others/LuisAlejandroBravoFerreira_BackendEngineer_Tyba.pdf).
 
 
 ## Architecture
