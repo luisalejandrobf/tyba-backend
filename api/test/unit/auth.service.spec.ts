@@ -17,6 +17,7 @@ interface UserResponse {
   _passwordHash: string; // It's actually included
 }
 
+// Tests the auth service for unit
 describe('AuthService', () => {
   let service: AuthService;
   let userRepository: UserRepository;
@@ -36,7 +37,8 @@ describe('AuthService', () => {
     expect(service).toBeDefined();
   });
 
-  // Test for register method
+  // Tests user registration functionality, validating successful creation
+  // and proper handling of duplicate user scenarios
   describe('register', () => {
     it('should register a new user successfully', async () => {
       const registerUserDto = { 
@@ -81,7 +83,8 @@ describe('AuthService', () => {
     });
   });
 
-  // Test for login method
+  // Tests user authentication functionality, validating successful login
+  // and proper error handling for invalid credentials
   describe('login', () => {
     it('should login an existing user successfully', async () => {
       // First register a user

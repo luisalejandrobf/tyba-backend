@@ -8,6 +8,7 @@ import { randomUUID } from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { User } from '../../src/domain/entities/user.entity';
 
+// Tests the transaction service for unit
 describe('TransactionService', () => {
   let service: TransactionService;
   let transactionRepository: TransactionRepository;
@@ -35,6 +36,8 @@ describe('TransactionService', () => {
     expect(service).toBeDefined();
   });
 
+  // Tests transaction retrieval functionality, validating proper
+  // filtering of transactions by user ID
   describe('getUserTransactions', () => {
     it('should return transactions for a given user ID', async () => {
       // Primero crear una transacción para el usuario
@@ -53,6 +56,8 @@ describe('TransactionService', () => {
     });
   });
 
+  // Tests transaction creation functionality, validating proper
+  // recording of transaction details
   describe('createTransaction', () => {
     it('should create and return a new transaction', async () => {
       const type = TransactionType.SEARCH;

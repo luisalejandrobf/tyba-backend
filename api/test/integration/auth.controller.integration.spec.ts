@@ -15,6 +15,7 @@ async function createMockUser(userRepository: UserRepository, email: string, pas
   return userRepository.createUser(user);
 }
 
+// Tests the auth controller for integration
 describe('AuthController (Integration)', () => {
   let app: INestApplication;
   let userRepository: UserRepository;
@@ -36,6 +37,8 @@ describe('AuthController (Integration)', () => {
     await app.close();
   });
 
+  // Tests user registration functionality, validating successful registration
+  // and various failure scenarios including validation errors
   describe('/auth/register (POST)', () => {
     it('should register a new user successfully', async () => {
       const uniqueEmail = `test-${randomUUID()}@example.com`;
@@ -149,6 +152,8 @@ describe('AuthController (Integration)', () => {
     });
   });
 
+  // Tests user authentication functionality including successful login
+  // and various failure scenarios
   describe('/auth/login (POST)', () => {
     const loginEmail = `login-${randomUUID()}@example.com`;
     const loginPassword = 'Password123!';
@@ -212,6 +217,8 @@ describe('AuthController (Integration)', () => {
     });
   });
 
+  // Tests user profile access functionality, validating authentication
+  // and proper user information retrieval
   describe('/auth/profile (GET)', () => {
     let authToken: string;
     const profileEmail = `profile-${randomUUID()}@example.com`;

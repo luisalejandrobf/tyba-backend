@@ -5,6 +5,7 @@ import { Restaurant } from '../../src/domain/entities/restaurant.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 
+// Tests the restaurant service for unit
 describe('RestaurantService', () => {
   let service: RestaurantService;
   let repository: RestaurantRepository;
@@ -22,6 +23,8 @@ describe('RestaurantService', () => {
     expect(service).toBeDefined();
   });
 
+  // Tests restaurant search functionality, validating proper handling
+  // of various input parameter combinations and error scenarios
   describe('findNearbyRestaurants', () => {
     it('should return restaurants when lat and lon are provided', async () => {
       const params = { lat: 40.7128, lon: -74.0060, radius: 1000 };

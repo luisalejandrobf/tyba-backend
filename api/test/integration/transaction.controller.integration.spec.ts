@@ -24,6 +24,7 @@ async function setupUserAndGetToken(app: INestApplication, userRepository: UserR
     return { token: loginResponse.body.data.token, userId: createdUser.id };
 }
 
+// Tests the transaction controller for integration
 describe('TransactionController (Integration)', () => {
   let app: INestApplication;
   let authToken: string;
@@ -51,6 +52,8 @@ describe('TransactionController (Integration)', () => {
     await app.close();
   });
 
+  // Tests transaction retrieval functionality and validates the 
+  // automatic creation of transaction records after API interactions
   describe('/transactions (GET)', () => {
     it('should get transactions for the authenticated user', async () => {
       // Primero realizamos una acción que genere una transacción

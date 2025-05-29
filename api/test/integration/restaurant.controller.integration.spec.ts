@@ -26,6 +26,7 @@ async function getAuthToken(app: INestApplication, userRepository: UserRepositor
     return loginResponse.body.data.token;
 }
 
+// Tests the restaurant controller for integration
 describe('RestaurantController (Integration)', () => {
   let app: INestApplication;
   let authToken: string;
@@ -50,6 +51,8 @@ describe('RestaurantController (Integration)', () => {
     await app.close();
   });
 
+  // Tests restaurant search functionality with various input parameters
+  // and validates error handling for invalid queries
   describe('/restaurants (GET)', () => {
     it('should find nearby restaurants with lat and lon query params', () => {
       const lat = 40.7128;
