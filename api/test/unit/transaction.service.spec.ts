@@ -2,26 +2,33 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TransactionService } from '../../src/application/services/transaction/transaction.service';
 import { TransactionRepository } from '../../src/domain/repositories/transaction.repository';
 import { Transaction, TransactionType } from '../../src/domain/entities/transaction.entity';
-
-// Mock TransactionRepository
-const mockTransactionRepository = {
-  createTransaction: jest.fn(),
-  findByUserId: jest.fn(),
-};
+import { AppModule } from '../../src/app.module';
+import { UserRepository } from '../../src/domain/repositories/user.repository';
+import { randomUUID } from 'crypto';
+import * as bcrypt from 'bcrypt';
+import { User } from '../../src/domain/entities/user.entity';
 
 describe('TransactionService', () => {
   let service: TransactionService;
+  let transactionRepository: TransactionRepository;
+  let userRepository: UserRepository;
+  let userId: string;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        TransactionService,
-        { provide: 'TransactionRepository', useValue: mockTransactionRepository },
-      ],
+      imports: [AppModule],
     }).compile();
 
     service = module.get<TransactionService>(TransactionService);
-    jest.clearAllMocks(); // Clear mocks before each test
+    transactionRepository = module.get<TransactionRepository>('TransactionRepository');
+    userRepository = module.get<UserRepository>('UserRepository');
+    
+    // Crear un usuario para las pruebas
+    const email = `transaction-test-${randomUUID()}@example.com`;
+    const passwordHash = await bcrypt.hash('password123', 10);
+    const user = User.create(email, passwordHash);
+    const createdUser = await userRepository.createUser(user);
+    userId = createdUser.id;
   });
 
   it('should be defined', () => {
@@ -30,42 +37,37 @@ describe('TransactionService', () => {
 
   describe('getUserTransactions', () => {
     it('should return transactions for a given user ID', async () => {
-      const userId = 'user123';
-      const mockTransactions = [
-        Transaction.create(userId, TransactionType.SEARCH, '/search', '{}', 'Search 1'),
-        Transaction.create(userId, TransactionType.AUTH, '/login', '{}', 'Login'),
-      ];
-      mockTransactionRepository.findByUserId.mockResolvedValue(mockTransactions);
-
+      // Primero crear una transacción para el usuario
+      await service.createTransaction(
+        userId, 
+        TransactionType.SEARCH, 
+        '/search', 
+        '{}', 
+        'Test Search'
+      );
+      
       const result = await service.getUserTransactions(userId);
 
-      expect(result).toEqual(mockTransactions);
-      expect(mockTransactionRepository.findByUserId).toHaveBeenCalledWith(userId);
+      expect(result).toBeInstanceOf(Array);
+      expect(result.some(t => t.userId === userId)).toBe(true);
     });
   });
 
   describe('createTransaction', () => {
     it('should create and return a new transaction', async () => {
-      const userId = 'user123';
       const type = TransactionType.SEARCH;
       const endpoint = '/restaurants';
       const params = '{"lat":40.7128,"lon":-74.0060}';
       const description = 'Searched for restaurants';
       
-      const mockTransaction = Transaction.create(userId, type, endpoint, params, description);
-      mockTransactionRepository.createTransaction.mockResolvedValue(mockTransaction);
-
       const result = await service.createTransaction(userId, type, endpoint, params, description);
 
-      expect(result).toEqual(mockTransaction);
-      expect(mockTransactionRepository.createTransaction).toHaveBeenCalledWith(expect.any(Transaction));
-      // You could add more specific checks for the properties of the transaction passed to createTransaction
-      const createdTransactionArg = mockTransactionRepository.createTransaction.mock.calls[0][0] as Transaction;
-      expect(createdTransactionArg.userId).toBe(userId);
-      expect(createdTransactionArg.type).toBe(type);
-      expect(createdTransactionArg.endpoint).toBe(endpoint);
-      expect(createdTransactionArg.params).toBe(params);
-      expect(createdTransactionArg.description).toBe(description);
+      expect(result).toBeDefined();
+      expect(result.userId).toBe(userId);
+      expect(result.type).toBe(type);
+      expect(result.endpoint).toBe(endpoint);
+      expect(result.params).toBe(params);
+      expect(result.description).toBe(description);
     });
   });
 }); 
