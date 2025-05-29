@@ -1,16 +1,37 @@
+# Docker Compose configuration for Tyba Backend Test
 version: '3.8'
 
 services:
+  # API Service: Node.js application
   api:
     build:
       context: ./api
       dockerfile: Dockerfile
     container_name: tyba-backend-api
     ports:
-      - "3000:3000"
+      - "3000:3000"  # Maps container port 3000 to host port 3000
     volumes:
-      - ./api:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./api:/usr/src/app  # Mount local code into container for development
+      - /usr/src/app/node_modules  # Prevents node_modules from being overwritten by host
     environment:
       - NODE_ENV=development
-    command: npm run start:dev 
+    command: npm run start:dev  # Run the application in development mode
+    depends_on:
+      - db  # Ensures the database is started before the API
+
+  # Database Service: PostgreSQL
+  db:
+    image: postgres:13  # Using PostgreSQL version 13
+    container_name: tyba-postgres
+    ports:
+      - "5432:5432"  # Maps container port 5432 to host port 5432
+    environment:
+      - POSTGRES_USER=postgres  # Database username (matches .env)
+      - POSTGRES_PASSWORD=1234  # Database password (matches .env)
+      - POSTGRES_DB=postgres  # Database name (matches .env)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persist database data across container restarts
+
+# Named volumes for persistent data storage
+volumes:
+  postgres_data:  # Volume for PostgreSQL data 
