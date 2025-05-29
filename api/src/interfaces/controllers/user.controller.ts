@@ -4,7 +4,7 @@ import { ApiResponseDto } from '../dtos/common/api-response.dto';
 import { Inject } from '@nestjs/common';
 import { UserRepository } from '../../domain/repositories/user.repository';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth, ApiParam, ApiExcludeController } from '@nestjs/swagger';
 
 /**
  * User controller
@@ -14,8 +14,10 @@ import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth, ApiParam } from '@ne
  * - Retrieving user by ID
  * 
  * All endpoints in this controller require authentication
+ * 
+ * Note: This controller is hidden from Swagger documentation
  */
-@ApiTags('users')
+@ApiExcludeController()
 @Controller('users')
 @UseGuards(JwtAuthGuard) // Protect all routes in this controller
 @ApiBearerAuth()
@@ -54,25 +56,6 @@ export class UserController {
    */
   @Get('me')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get current user profile' })
-  @ApiResponse({ 
-    status: HttpStatus.OK, 
-    description: 'User profile retrieved successfully',
-    schema: {
-      example: {
-        success: true,
-        message: 'User profile retrieved successfully',
-        data: {
-          id: '550e8400-e29b-41d4-a716-446655440000',
-          email: 'user@example.com',
-          createdAt: '2023-07-24T12:34:56.789Z',
-          updatedAt: '2023-07-24T12:34:56.789Z'
-        }
-      }
-    }
-  })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized access' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
   async getMe(@CurrentUser() user: any): Promise<ApiResponseDto<any>> {
     const userEntity = await this.userRepository.findById(user.id);
     if (!userEntity) {
@@ -113,26 +96,6 @@ export class UserController {
    */
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get user by ID' })
-  @ApiParam({ name: 'id', description: 'User ID' })
-  @ApiResponse({ 
-    status: HttpStatus.OK, 
-    description: 'User retrieved successfully',
-    schema: {
-      example: {
-        success: true,
-        message: 'User retrieved successfully',
-        data: {
-          id: '550e8400-e29b-41d4-a716-446655440000',
-          email: 'user@example.com',
-          createdAt: '2023-07-24T12:34:56.789Z',
-          updatedAt: '2023-07-24T12:34:56.789Z'
-        }
-      }
-    }
-  })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized access' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
   async getUserById(@Param('id') id: string): Promise<ApiResponseDto<any>> {
     const user = await this.userRepository.findById(id);
     if (!user) {

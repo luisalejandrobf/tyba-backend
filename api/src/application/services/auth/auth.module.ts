@@ -30,6 +30,6 @@ import { RepositoriesModule } from '../../../infrastructure/repositories/reposit
     RepositoriesModule,
   ],
   providers: [AuthService, JwtStrategy],
-  exports: [AuthService],
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {} 

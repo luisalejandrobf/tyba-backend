@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from './common/pipes/validation.pipe';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Logger } from '@nestjs/common';
 
 /**
  * Application bootstrap function
@@ -13,10 +14,17 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
  * 4. Starts the HTTP server
  */
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap');
+  logger.log('Starting Tyba Backend API application...');
+
+  // Create NestJS application with detailed logging
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+  });
   
   // Apply global validation pipe to validate all incoming requests
   app.useGlobalPipes(ValidationPipe);
+  logger.log('Global validation pipe applied');
   
   // Set up Swagger documentation
   const config = new DocumentBuilder()
@@ -25,14 +33,19 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('auth', 'Authentication endpoints')
     .addTag('users', 'User endpoints')
+    .addTag('restaurants', 'Restaurant search endpoints')
+    .addTag('transactions', 'Transaction history endpoints')
     .addBearerAuth()
     .build();
   
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
+  logger.log('Swagger documentation setup at /api-docs');
   
   // Start the server on the configured port or default to 3000
-  await app.listen(process.env.PORT ?? 3000);
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port);
+  logger.log(`Application listening on port ${port}`);
 }
 
 // Execute the bootstrap function

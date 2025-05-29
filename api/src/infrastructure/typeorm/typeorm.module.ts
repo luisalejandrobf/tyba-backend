@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserEntity } from './entities/user.entity';
+import { TransactionEntity } from './entities/transaction.entity';
+import { join } from 'path';
 
 /**
  * TypeORM configuration module
@@ -27,9 +29,12 @@ import { UserEntity } from './entities/user.entity';
           username: configService.get<string>('database.user'),
           password: configService.get<string>('database.password'),
           database: configService.get<string>('database.name'),
-          entities: [UserEntity],
+          entities: [UserEntity, TransactionEntity],
           synchronize: true, // Automatically creates tables if they don't exist
           ssl: sslConfig,
+          migrations: [join(__dirname, '../../migration/*{.ts,.js}')],
+          migrationsRun: true, // Automatically run migrations on startup
+          logging: ['error', 'warn', 'migration'],
         };
       },
     }),
