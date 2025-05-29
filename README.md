@@ -4,6 +4,9 @@
 
 This project is a RESTful API built with NestJS that provides authentication, restaurant search, and transaction logging functionality. The application follows a clean architecture approach with distinct layers for domain, application, infrastructure, and interfaces.
 
+For a brief summary of my work, please visit [others\LuisAlejandroBravoFerreira_BackendEngineer_Tyba.pdf](others\LuisAlejandroBravoFerreira_BackendEngineer_Tyba.pdf).
+
+
 ## Architecture
 
 The application implements a **Hexagonal Architecture** (also known as Ports and Adapters pattern), which is a form of Clean Architecture. This architectural style isolates the core business logic from external concerns, making the system more maintainable, testable, and adaptable to change.
